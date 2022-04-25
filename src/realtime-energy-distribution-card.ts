@@ -46,21 +46,35 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     const hasSolarProduction = true;
     const hasReturnToGrid = hasConsumption;
 
-    const gridConsumption =
-      +this.hass.states[this._config.grid_entity!].state ?? 0;
-    const solarConsumptionBattery =
-      +this.hass.states[this._config.solar_to_battery_entity!].state ?? 0;
-    const solarConsumptionGrid =
-      +this.hass.states[this._config.solar_to_grid_entity!].state ?? 0;
-    const solarConsumptionHome =
-      +this.hass.states[this._config.solar_to_home_entity!].state ?? 0;
+    const entityValue = (entity: string | undefined): number => {
+      if (!entity) return 0;
+      return +formatNumber(
+        +this.hass.states[entity].state ?? 0,
+        this.hass.locale,
+        {
+          maximumFractionDigits: 1,
+        }
+      );
+    };
+
+    const gridConsumptionHome = entityValue(this._config.grid_to_home_entity);
+    const solarConsumptionBattery = entityValue(
+      this._config.solar_to_battery_entity
+    );
+    const solarConsumptionGrid = entityValue(this._config.solar_to_grid_entity);
+    const solarConsumptionHome = entityValue(this._config.solar_to_home_entity);
+    const batteryCharge = entityValue(this._config.battery_charge_entity);
+    const batteryConsumptionHome = entityValue(
+      this._config.battery_to_home_entity
+    );
     const totalFromSolar = hasSolarProduction
       ? solarConsumptionBattery + solarConsumptionGrid + solarConsumptionHome
       : 0;
-    const batteryCharge =
-      +this.hass.states[this._config.battery_charge_entity!].state ?? 0;
-    const batteryConsumption =
-      +this.hass.states[this._config.battery_to_home_entity!].state ?? 0;
+    const totalConsumption =
+      solarConsumptionHome +
+      batteryConsumptionHome +
+      gridConsumptionHome +
+      solarConsumptionGrid;
     // TODO: Delete these
     const batteryFromGrid = 0;
     const batteryToGrid = 0;
@@ -71,9 +85,9 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     let homeSolarCircumference: number | undefined;
     const totalHomeConsumption = Math.max(
       0,
-      (gridConsumption > 0 ? gridConsumption : 0) +
+      (gridConsumptionHome > 0 ? gridConsumptionHome : 0) +
         (solarConsumptionHome || 0) +
-        (batteryConsumption || 0)
+        (batteryConsumptionHome || 0)
     );
 
     let batteryIcon = mdiBatteryHigh;
@@ -124,13 +138,13 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                       kW
                     </span>`
                   : html``}
-                ${gridConsumption > 0
+                ${gridConsumptionHome > 0
                   ? html`<span class="consumption">
                       <ha-svg-icon
                         class="small"
                         .path=${mdiArrowRight}
                       ></ha-svg-icon
-                      >${formatNumber(gridConsumption, this.hass.locale, {
+                      >${formatNumber(gridConsumptionHome, this.hass.locale, {
                         maximumFractionDigits: 1,
                       })}
                       kW
@@ -228,7 +242,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                           >
                         `
                       : html``}
-                    ${batteryConsumption > 0
+                    ${batteryConsumptionHome > 0
                       ? html`
                           <span class="battery-out">
                             <ha-svg-icon
@@ -236,7 +250,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                               .path=${mdiArrowUp}
                             ></ha-svg-icon
                             >${formatNumber(
-                              batteryConsumption,
+                              batteryConsumptionHome,
                               this.hass.locale,
                               {
                                 maximumFractionDigits: 1,
@@ -322,7 +336,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                   >
                     <animateMotion
                       dur="${
-                        (1 - solarConsumptionGrid / totalFromSolar) *
+                        (1 - solarConsumptionGrid / totalConsumption) *
                         speedFactor
                       }s"
                       repeatCount="indefinite"
@@ -340,7 +354,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                   >
                     <animateMotion
                       dur="${
-                        (1 - solarConsumptionHome / totalFromSolar) *
+                        (1 - solarConsumptionHome / totalConsumption) *
                         speedFactor
                       }s"
                       repeatCount="indefinite"
@@ -358,13 +372,31 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                   >
                     <animateMotion
                       dur="${
-                        (1 - solarConsumptionBattery / totalFromSolar) *
+                        (1 - solarConsumptionBattery / totalConsumption) *
                         speedFactor
                       }s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
                       <mpath xlink:href="#battery-solar" />
+                    </animateMotion>
+                  </circle>`
+                : ""}
+              ${batteryConsumptionHome > 0
+                ? svg`<circle
+                    r="1"
+                    class="battery-house"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${
+                        (1 - batteryConsumptionHome / totalConsumption) *
+                        speedFactor
+                      }s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#battery-house" />
                     </animateMotion>
                   </circle>`
                 : ""}
