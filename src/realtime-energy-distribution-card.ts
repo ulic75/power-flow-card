@@ -69,8 +69,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     // eslint-disable-next-line prefer-const
     let homeBatteryCircumference: number | undefined;
     let homeSolarCircumference: number | undefined;
-    let homeLowCarbonCircumference: number | undefined;
-    let homeHighCarbonCircumference: number | undefined;
     const totalHomeConsumption = Math.max(
       0,
       (gridConsumption > 0 ? gridConsumption : 0) +
@@ -148,9 +146,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
             <div class="circle-container home">
               <div
                 class="circle ${classMap({
-                  border:
-                    homeSolarCircumference === undefined &&
-                    homeLowCarbonCircumference === undefined,
+                  border: homeSolarCircumference === undefined,
                 })}"
               >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
@@ -158,8 +154,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                   maximumFractionDigits: 1,
                 })}
                 kW
-                ${homeSolarCircumference !== undefined ||
-                homeLowCarbonCircumference !== undefined
+                ${homeSolarCircumference !== undefined
                   ? html`<svg>
                       ${homeSolarCircumference !== undefined
                         ? svg`<circle
@@ -193,22 +188,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                             shape-rendering="geometricPrecision"
                           />`
                         : ""}
-                      <circle
-                        class="grid"
-                        cx="40"
-                        cy="40"
-                        r="38"
-                        stroke-dasharray="${homeHighCarbonCircumference ??
-                        CIRCLE_CIRCUMFERENCE -
-                          homeSolarCircumference! -
-                          (homeBatteryCircumference ||
-                            0)} ${homeHighCarbonCircumference !== undefined
-                          ? CIRCLE_CIRCUMFERENCE - homeHighCarbonCircumference
-                          : homeSolarCircumference! +
-                            (homeBatteryCircumference || 0)}"
-                        stroke-dashoffset="0"
-                        shape-rendering="geometricPrecision"
-                      />
                     </svg>`
                   : ""}
               </div>
