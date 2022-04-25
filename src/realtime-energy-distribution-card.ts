@@ -287,9 +287,9 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 ? svg`<path
                     id="return"
                     class="return"
-                    d="M${hasBattery ? 45 : 47},20 v0 c0,${
-                    hasBattery ? "30 -10,25 -25,25" : "35 -10,30 -25,30"
-                  } h-25"
+                    d="M${hasBattery ? 45 : 47},0 v15 c0,${
+                    hasBattery ? "35 -10,30 -30,30" : "40 -10,35 -30,35"
+                  } h-20"
                     vector-effect="non-scaling-stroke"
                   ></path> `
                 : ""}
@@ -297,9 +297,8 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 ? svg`<path
                     id="solar"
                     class="solar"
-                    d="M${hasBattery ? 55 : 53},20 v0 c0,${
-                    hasBattery ? "30 10,25 25,25" : "35 10,30 25,30"
-                    // M55,20 v0 c0,30 10,25 25,25 h25
+                    d="M${hasBattery ? 55 : 53},0 v15 c0,${
+                    hasBattery ? "35 10,30 30,30" : "40 10,35 30,35"
                   } h25"
                     vector-effect="non-scaling-stroke"
                   ></path>`
@@ -308,7 +307,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 ? svg`<path
                     id="battery-house"
                     class="battery-house"
-                    d="M55,80 v0 c0,-30 10,-25 25,-25 h25"
+                    d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   <path
@@ -317,7 +316,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                       "battery-from-grid": Boolean(batteryFromGrid),
                       "battery-to-grid": Boolean(batteryToGrid),
                     })}
-                    d="M45,80 v0 c0,-30 -10,-25 -25,-25 h-25"
+                    d="M45,100 v-15 c0,-35 -10,-30 -30,-30 h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   `
@@ -326,7 +325,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 ? svg`<path
                     id="battery-solar"
                     class="battery-solar"
-                    d="M50,26 V74"
+                    d="M50,0 V100"
                     vector-effect="non-scaling-stroke"
                   ></path>`
                 : ""}
