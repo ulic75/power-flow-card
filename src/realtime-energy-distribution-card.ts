@@ -1,9 +1,13 @@
+/* eslint no-nested-ternary: warn */
 import {
   mdiArrowDown,
   mdiArrowLeft,
   mdiArrowRight,
   mdiArrowUp,
   mdiBatteryHigh,
+  mdiBatteryLow,
+  mdiBatteryMedium,
+  mdiBatteryOutline,
   mdiHome,
   mdiSolarPower,
   mdiTransmissionTower,
@@ -12,16 +16,16 @@ import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribution-card-config.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 
 @customElement("realtime-energy-distribution-card")
 export class RealtimeEnergyDistributionCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
+  @state() private _config?: RealtimeEnergyDistributionCardConfig;
 
-  @state() private _config?: any;
-
-  setConfig(config: any): void {
+  setConfig(config: RealtimeEnergyDistributionCardConfig): void {
     this._config = config;
   }
 
@@ -34,32 +38,54 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       return html``;
     }
 
+    const speedFactor = 5;
+
     const hasConsumption = true;
 
     const hasBattery = true;
-    const hasSolarBattery = true;
     const hasSolarProduction = true;
     const hasReturnToGrid = hasConsumption;
 
+    const gridConsumption =
+      +this.hass.states[this._config.grid_entity!].state ?? 0;
+    const solarConsumptionBattery =
+      +this.hass.states[this._config.solar_to_battery_entity!].state ?? 0;
+    const solarConsumptionGrid =
+      +this.hass.states[this._config.solar_to_grid_entity!].state ?? 0;
+    const solarConsumptionHome =
+      +this.hass.states[this._config.solar_to_home_entity!].state ?? 0;
+    const totalFromSolar = hasSolarProduction
+      ? solarConsumptionBattery + solarConsumptionGrid + solarConsumptionHome
+      : 0;
+    const batteryCharge =
+      +this.hass.states[this._config.battery_charge_entity!].state ?? 0;
+    const batteryConsumption =
+      +this.hass.states[this._config.battery_to_home_entity!].state ?? 0;
     // TODO: Delete these
-    const gridConsumption = 0;
-    const totalFromGrid = 0;
-    const solarConsumption = 2.4;
-    const batteryConsumption = 0;
-    const totalBatteryIn = 2.5;
-    const totalBatteryOut = 0;
+    const batteryFromGrid = 0;
+    const batteryToGrid = 0;
     // TODO: End Delete These
 
     // eslint-disable-next-line prefer-const
-    let returnedToGrid: number | null = null;
     let homeBatteryCircumference: number | undefined;
     let homeSolarCircumference: number | undefined;
     let homeLowCarbonCircumference: number | undefined;
     let homeHighCarbonCircumference: number | undefined;
     const totalHomeConsumption = Math.max(
       0,
-      gridConsumption + (solarConsumption || 0) + (batteryConsumption || 0)
+      (gridConsumption > 0 ? gridConsumption : 0) +
+        (solarConsumptionHome || 0) +
+        (batteryConsumption || 0)
     );
+
+    let batteryIcon = mdiBatteryHigh;
+    if (batteryCharge <= 72 && batteryCharge > 44) {
+      batteryIcon = mdiBatteryMedium;
+    } else if (batteryCharge <= 44 && batteryCharge > 16) {
+      batteryIcon = mdiBatteryLow;
+    } else if (batteryCharge <= 16) {
+      batteryIcon = mdiBatteryOutline;
+    }
 
     return html`
       <ha-card .header=${this._config.title}>
@@ -73,10 +99,14 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 >
                 <div class="circle">
                   <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                  ${formatNumber(5.3 || 0, this.hass.locale, {
-                    maximumFractionDigits: 1,
-                  })}
-                  kWh
+                  ${totalFromSolar > 0
+                    ? html` <span class="solar">
+                        ${formatNumber(totalFromSolar || 0, this.hass.locale, {
+                          maximumFractionDigits: 1,
+                        })}
+                        kW</span
+                      >`
+                    : html``}
                 </div>
               </div>`
             : html``}
@@ -84,29 +114,30 @@ export class RealtimeEnergyDistributionCard extends LitElement {
             <div class="circle-container grid">
               <div class="circle">
                 <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-                ${returnedToGrid !== null
+                ${solarConsumptionGrid > 0
                   ? html`<span class="return">
                       <ha-svg-icon
                         class="small"
                         .path=${mdiArrowLeft}
                       ></ha-svg-icon
-                      >${formatNumber(returnedToGrid, this.hass.locale, {
+                      >${formatNumber(solarConsumptionGrid, this.hass.locale, {
                         maximumFractionDigits: 1,
                       })}
-                      kWh
+                      kW
                     </span>`
-                  : ""}
-                <span class="consumption">
-                  ${hasReturnToGrid
-                    ? html`<ha-svg-icon
+                  : html``}
+                ${gridConsumption > 0
+                  ? html`<span class="consumption">
+                      <ha-svg-icon
                         class="small"
                         .path=${mdiArrowRight}
-                      ></ha-svg-icon>`
-                    : ""}${formatNumber(totalFromGrid, this.hass.locale, {
-                    maximumFractionDigits: 1,
-                  })}
-                  kWh
-                </span>
+                      ></ha-svg-icon
+                      >${formatNumber(gridConsumption, this.hass.locale, {
+                        maximumFractionDigits: 1,
+                      })}
+                      kW
+                    </span>`
+                  : html``}
               </div>
               <span class="label"
                 >${this.hass.localize(
@@ -126,7 +157,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 ${formatNumber(totalHomeConsumption, this.hass.locale, {
                   maximumFractionDigits: 1,
                 })}
-                kWh
+                kW
                 ${homeSolarCircumference !== undefined ||
                 homeLowCarbonCircumference !== undefined
                   ? html`<svg>
@@ -157,24 +188,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE -
                               homeBatteryCircumference -
-                              (homeSolarCircumference || 0)
-                            }"
-                            shape-rendering="geometricPrecision"
-                          />`
-                        : ""}
-                      ${homeLowCarbonCircumference
-                        ? svg`<circle
-                            class="low-carbon"
-                            cx="40"
-                            cy="40"
-                            r="38"
-                            stroke-dasharray="${homeLowCarbonCircumference} ${
-                            CIRCLE_CIRCUMFERENCE - homeLowCarbonCircumference
-                          }"
-                            stroke-dashoffset="-${
-                              CIRCLE_CIRCUMFERENCE -
-                              homeLowCarbonCircumference -
-                              (homeBatteryCircumference || 0) -
                               (homeSolarCircumference || 0)
                             }"
                             shape-rendering="geometricPrecision"
@@ -211,27 +224,49 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 <div class="spacer"></div>
                 <div class="circle-container battery">
                   <div class="circle">
-                    <ha-svg-icon .path=${mdiBatteryHigh}></ha-svg-icon>
-                    <span class="battery-in">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowDown}
-                      ></ha-svg-icon
-                      >${formatNumber(totalBatteryIn || 0, this.hass.locale, {
-                        maximumFractionDigits: 1,
-                      })}
-                      kWh</span
-                    >
-                    <span class="battery-out">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowUp}
-                      ></ha-svg-icon>
-                      ${formatNumber(totalBatteryOut || 0, this.hass.locale, {
-                        maximumFractionDigits: 1,
-                      })}
-                      kWh</span
-                    >
+                    <span>
+                      ${formatNumber(batteryCharge, this.hass.locale, {
+                        maximumFractionDigits: 0,
+                        minimumFractionDigits: 0,
+                      })}%
+                    </span>
+                    <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
+                    ${solarConsumptionBattery > 0
+                      ? html`
+                          <span class="battery-in">
+                            <ha-svg-icon
+                              class="small"
+                              .path=${mdiArrowDown}
+                            ></ha-svg-icon
+                            >${formatNumber(
+                              solarConsumptionBattery,
+                              this.hass.locale,
+                              {
+                                maximumFractionDigits: 1,
+                              }
+                            )}
+                            kW</span
+                          >
+                        `
+                      : html``}
+                    ${batteryConsumption > 0
+                      ? html`
+                          <span class="battery-out">
+                            <ha-svg-icon
+                              class="small"
+                              .path=${mdiArrowUp}
+                            ></ha-svg-icon
+                            >${formatNumber(
+                              batteryConsumption,
+                              this.hass.locale,
+                              {
+                                maximumFractionDigits: 1,
+                              }
+                            )}
+                            kW</span
+                          >
+                        `
+                      : html``}
                   </div>
                   <span class="label"
                     >${this.hass.localize(
@@ -242,6 +277,121 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 <div class="spacer"></div>
               </div>`
             : ""}
+          <div class="lines ${classMap({ battery: hasBattery })}">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              ${hasReturnToGrid && hasSolarProduction
+                ? svg`<path
+                    id="return"
+                    class="return"
+                    d="M${hasBattery ? 45 : 47},20 v0 c0,${
+                    hasBattery ? "30 -10,25 -25,25" : "35 -10,30 -25,30"
+                  } h-25"
+                    vector-effect="non-scaling-stroke"
+                  ></path> `
+                : ""}
+              ${hasSolarProduction
+                ? svg`<path
+                    id="solar"
+                    class="solar"
+                    d="M${hasBattery ? 55 : 53},20 v0 c0,${
+                    hasBattery ? "30 10,25 25,25" : "35 10,30 25,30"
+                    // M55,20 v0 c0,30 10,25 25,25 h25
+                  } h25"
+                    vector-effect="non-scaling-stroke"
+                  ></path>`
+                : ""}
+              ${hasBattery
+                ? svg`<path
+                    id="battery-house"
+                    class="battery-house"
+                    d="M55,80 v0 c0,-30 10,-25 25,-25 h25"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  <path
+                    id="battery-grid"
+                    class=${classMap({
+                      "battery-from-grid": Boolean(batteryFromGrid),
+                      "battery-to-grid": Boolean(batteryToGrid),
+                    })}
+                    d="M45,80 v0 c0,-30 -10,-25 -25,-25 h-25"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  `
+                : ""}
+              ${hasBattery && hasSolarProduction
+                ? svg`<path
+                    id="battery-solar"
+                    class="battery-solar"
+                    d="M50,26 V74"
+                    vector-effect="non-scaling-stroke"
+                  ></path>`
+                : ""}
+              <path
+                class="grid"
+                id="grid"
+                d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
+                vector-effect="non-scaling-stroke"
+              ></path>
+              ${solarConsumptionGrid && hasSolarProduction
+                ? svg`<circle
+                    r="1"
+                    class="return"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${
+                        (1 - solarConsumptionGrid / totalFromSolar) *
+                        speedFactor
+                      }s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#return" />
+                    </animateMotion>
+                  </circle>`
+                : ""}
+              ${solarConsumptionHome
+                ? svg`<circle
+                    r="1"
+                    class="solar"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${
+                        (1 - solarConsumptionHome / totalFromSolar) *
+                        speedFactor
+                      }s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#solar" />
+                    </animateMotion>
+                  </circle>`
+                : ""}
+              ${solarConsumptionBattery
+                ? svg`<circle
+                    r="1"
+                    class="battery-solar"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${
+                        (1 - solarConsumptionBattery / totalFromSolar) *
+                        speedFactor
+                      }s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#battery-solar" />
+                    </animateMotion>
+                  </circle>`
+                : ""}
+            </svg>
+          </div>
         </div></ha-card
       >
     `;
@@ -253,6 +403,26 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     }
     .card-content {
       position: relative;
+    }
+    .lines {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 146px;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px 16px;
+      box-sizing: border-box;
+    }
+    .lines.battery {
+      bottom: 100px;
+      height: 156px;
+    }
+    .lines svg {
+      width: calc(100% - 160px);
+      height: 100%;
+      max-width: 340px;
     }
     .row {
       display: flex;
@@ -303,6 +473,24 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       color: var(--secondary-text-color);
       font-size: 12px;
     }
+    line,
+    path {
+      stroke: var(--primary-text-color);
+      stroke-width: 1;
+      fill: none;
+    }
+    .circle svg {
+      position: absolute;
+      fill: none;
+      stroke-width: 4px;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+    .solar {
+      color: var(--energy-solar-color);
+    }
     .solar .circle {
       border-color: var(--energy-solar-color);
     }
@@ -342,6 +530,16 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     }
     .battery-out {
       color: var(--energy-battery-out-color);
+    }
+    path.return,
+    circle.return,
+    circle.battery-to-grid {
+      stroke: var(--energy-grid-return-color);
+    }
+    circle.return,
+    circle.battery-to-grid {
+      stroke-width: 4;
+      fill: var(--energy-grid-return-color);
     }
     .return {
       color: var(--energy-grid-return-color);
