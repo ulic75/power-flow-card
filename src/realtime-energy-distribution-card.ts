@@ -17,6 +17,7 @@ import { css, html, LitElement, svg, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribution-card-config.js";
+import { roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 
@@ -98,9 +99,9 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 >
                 <div class="circle">
                   <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
-                  ${totalSolarProduction > 0
+                  ${solarState > 0
                     ? html` <span class="solar">
-                        ${singleFractionalDigit(totalSolarProduction)} kW</span
+                        ${roundValue(solarState, 1)} kW</span
                       >`
                     : html``}
                 </div>
@@ -116,7 +117,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                         class="small"
                         .path=${mdiArrowLeft}
                       ></ha-svg-icon
-                      >${singleFractionalDigit(solarToGrid)} kW
+                      >${roundValue(solarToGrid, 1)} kW
                     </span>`
                   : html``}
                 ${gridToHome > 0
@@ -125,7 +126,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                         class="small"
                         .path=${mdiArrowRight}
                       ></ha-svg-icon
-                      >${singleFractionalDigit(gridToHome)} kW
+                      >${roundValue(gridToHome, 1)} kW
                     </span>`
                   : html``}
               </div>
@@ -142,7 +143,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 })}"
               >
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
-                ${singleFractionalDigit(totalHomeConsumption)} kW
+                ${roundValue(homeConsumption, 1)} kW
                 ${homeSolarCircumference !== undefined
                   ? html`<svg>
                       ${homeSolarCircumference !== undefined
@@ -206,7 +207,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                               class="small"
                               .path=${mdiArrowDown}
                             ></ha-svg-icon
-                            >${singleFractionalDigit(solarToBattery)} kW</span
+                            >${roundValue(solarToBattery, 1)} kW</span
                           >
                         `
                       : html``}
@@ -217,7 +218,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                               class="small"
                               .path=${mdiArrowUp}
                             ></ha-svg-icon
-                            >${singleFractionalDigit(batteryToHome)} kW</span
+                            >${roundValue(batteryToHome, 1)} kW</span
                           >
                         `
                       : html``}
