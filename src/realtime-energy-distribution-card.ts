@@ -39,36 +39,32 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       return html``;
     }
 
-    const speedFactor = 5;
+    const hasBattery = this._config.entities.battery !== undefined;
+    const hasSolarProduction = this._config.entities.solar !== undefined;
+    const hasReturnToGrid = true;
 
-    const hasConsumption = true;
-
-    const hasBattery = true;
-    const hasSolarProduction = true;
-    const hasReturnToGrid = hasConsumption;
-
-    const singleFractionalDigit = (value: number): number =>
-      +formatNumber(value, this.hass.locale, { maximumFractionDigits: 1 });
-
-    const entityValue = (entity: string | undefined): number => {
-      if (!entity) return 0;
-      return singleFractionalDigit(+this.hass.states[entity].state ?? 0);
-    };
-
-    const batteryToHome = entityValue(this._config.battery_to_home_entity);
-    const gridToHome = entityValue(this._config.grid_to_home_entity);
-    const solarToBattery = entityValue(this._config.solar_to_battery_entity);
-    const solarToGrid = entityValue(this._config.solar_to_grid_entity);
-    const solarToHome = entityValue(this._config.solar_to_home_entity);
-    const batteryCharge = entityValue(this._config.battery_charge_entity);
-
-    const totalSolarProduction = hasSolarProduction
-      ? solarToBattery + solarToGrid + solarToHome
+    const batteryState = this._config.entities.battery
+      ? +this.hass.states[this._config.entities.battery].state
       : 0;
-    const totalConsumption =
-      batteryToHome + gridToHome + solarToHome + solarToGrid;
-    const totalHomeConsumption =
-      (gridToHome > 0 ? gridToHome : 0) + solarToHome + batteryToHome;
+    const batteryChargeState = this._config.entities.battery_charge
+      ? +this.hass.states[this._config.entities.battery_charge].state
+      : 0;
+    const gridState = this._config.entities.grid
+      ? +this.hass.states[this._config.entities.grid].state
+      : 0;
+    const solarState = this._config.entities.solar
+      ? +this.hass.states[this._config.entities.solar].state
+      : 0;
+
+    const solarToGrid = roundValue(Math.abs(Math.min(gridState, 0)), 1);
+    const batteryToHome = roundValue(Math.max(batteryState, 0), 1);
+    const gridToHome = roundValue(Math.max(gridState, 0), 1);
+    const solarToBattery = roundValue(Math.abs(Math.min(batteryState, 0)), 1);
+    const solarToHome =
+      roundValue(solarState, 1) - solarToGrid - solarToBattery;
+
+    const homeConsumption = batteryToHome + gridToHome + solarToHome;
+
     // TODO: Delete these
     const batteryFromGrid = 0;
     const batteryToGrid = 0;
@@ -79,11 +75,11 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     let homeSolarCircumference: number | undefined;
 
     let batteryIcon = mdiBatteryHigh;
-    if (batteryCharge <= 72 && batteryCharge > 44) {
+    if (batteryChargeState <= 72 && batteryChargeState > 44) {
       batteryIcon = mdiBatteryMedium;
-    } else if (batteryCharge <= 44 && batteryCharge > 16) {
+    } else if (batteryChargeState <= 44 && batteryChargeState > 16) {
       batteryIcon = mdiBatteryLow;
-    } else if (batteryCharge <= 16) {
+    } else if (batteryChargeState <= 16) {
       batteryIcon = mdiBatteryOutline;
     }
 
@@ -194,7 +190,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 <div class="circle-container battery">
                   <div class="circle">
                     <span>
-                      ${formatNumber(batteryCharge, this.hass.locale, {
+                      ${formatNumber(batteryChargeState, this.hass.locale, {
                         maximumFractionDigits: 0,
                         minimumFractionDigits: 0,
                       })}%
