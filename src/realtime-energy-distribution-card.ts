@@ -114,24 +114,17 @@ export class RealtimeEnergyDistributionCard extends LitElement {
             <div class="circle-container grid">
               <div class="circle">
                 <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
-                ${solarToGrid > 0
-                  ? html`<span class="return">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowLeft}
-                      ></ha-svg-icon
-                      >${roundValue(solarToGrid, 1)} kW
-                    </span>`
-                  : html``}
-                ${gridToHome > 0
-                  ? html`<span class="consumption">
-                      <ha-svg-icon
-                        class="small"
-                        .path=${mdiArrowRight}
-                      ></ha-svg-icon
-                      >${roundValue(gridToHome, 1)} kW
-                    </span>`
-                  : html``}
+                <span class="return">
+                  <ha-svg-icon class="small" .path=${mdiArrowLeft}></ha-svg-icon
+                  >${roundValue(solarToGrid, 1)} kW
+                </span>
+                <span class="consumption">
+                  <ha-svg-icon
+                    class="small"
+                    .path=${mdiArrowRight}
+                  ></ha-svg-icon
+                  >${roundValue(gridToHome, 1)} kW
+                </span>
               </div>
               <span class="label"
                 >${this.hass.localize(
@@ -203,28 +196,20 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                       })}%
                     </span>
                     <ha-svg-icon .path=${batteryIcon}></ha-svg-icon>
-                    ${solarToBattery > 0
-                      ? html`
-                          <span class="battery-in">
-                            <ha-svg-icon
-                              class="small"
-                              .path=${mdiArrowDown}
-                            ></ha-svg-icon
-                            >${roundValue(solarToBattery, 1)} kW</span
-                          >
-                        `
-                      : html``}
-                    ${batteryToHome > 0
-                      ? html`
-                          <span class="battery-out">
-                            <ha-svg-icon
-                              class="small"
-                              .path=${mdiArrowUp}
-                            ></ha-svg-icon
-                            >${roundValue(batteryToHome, 1)} kW</span
-                          >
-                        `
-                      : html``}
+                    <span class="battery-in">
+                      <ha-svg-icon
+                        class="small"
+                        .path=${mdiArrowDown}
+                      ></ha-svg-icon
+                      >${roundValue(solarToBattery, 1)} kW</span
+                    >
+                    <span class="battery-out">
+                      <ha-svg-icon
+                        class="small"
+                        .path=${mdiArrowUp}
+                      ></ha-svg-icon
+                      >${roundValue(batteryToHome, 1)} kW</span
+                    >
                   </div>
                   <span class="label"
                     >${this.hass.localize(
