@@ -79,7 +79,17 @@ export class RealtimeEnergyDistributionCard extends LitElement {
 
     // eslint-disable-next-line prefer-const
     let homeBatteryCircumference: number | undefined;
+    if (hasBattery)
+      homeBatteryCircumference =
+        CIRCLE_CIRCUMFERENCE * (batteryToHome / homeConsumption);
+
     let homeSolarCircumference: number | undefined;
+    if (hasSolarProduction)
+      homeSolarCircumference =
+        CIRCLE_CIRCUMFERENCE * (solarToHome / homeConsumption);
+
+    const homeHighCarbonCircumference =
+      CIRCLE_CIRCUMFERENCE * (gridToHome / homeConsumption);
 
     let batteryIcon = mdiBatteryHigh;
     if (batteryChargeState <= 72 && batteryChargeState > 44) {
@@ -174,6 +184,22 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                             shape-rendering="geometricPrecision"
                           />`
                         : ""}
+                      <circle
+                        class="grid"
+                        cx="40"
+                        cy="40"
+                        r="38"
+                        stroke-dasharray="${homeHighCarbonCircumference ??
+                        CIRCLE_CIRCUMFERENCE -
+                          homeSolarCircumference! -
+                          (homeBatteryCircumference ||
+                            0)} ${homeHighCarbonCircumference !== undefined
+                          ? CIRCLE_CIRCUMFERENCE - homeHighCarbonCircumference
+                          : homeSolarCircumference! +
+                            (homeBatteryCircumference || 0)}"
+                        stroke-dashoffset="0"
+                        shape-rendering="geometricPrecision"
+                      />
                     </svg>`
                   : ""}
               </div>
