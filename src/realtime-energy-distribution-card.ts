@@ -35,7 +35,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   }
 
   protected render(): TemplateResult {
-    if (!this._config) {
+    if (!this._config || !this.hass) {
       return html``;
     }
 
