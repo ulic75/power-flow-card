@@ -72,11 +72,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
 
-    // TODO: Delete these
-    const batteryFromGrid = 0;
-    const batteryToGrid = 0;
-    // TODO: End Delete These
-
     // eslint-disable-next-line prefer-const
     let homeBatteryCircumference: number | undefined;
     if (hasBattery)
@@ -277,15 +272,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     id="battery-home"
                     class="battery-home"
                     d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
-                    vector-effect="non-scaling-stroke"
-                  ></path>
-                  <path
-                    id="battery-grid"
-                    class=${classMap({
-                      "battery-from-grid": Boolean(batteryFromGrid),
-                      "battery-to-grid": Boolean(batteryToGrid),
-                    })}
-                    d="M45,100 v-15 c0,-35 -10,-30 -30,-30 h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
                   `
