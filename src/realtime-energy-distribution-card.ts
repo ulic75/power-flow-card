@@ -289,16 +289,14 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                 d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
                 vector-effect="non-scaling-stroke"
               ></path>
-              ${solarToGrid && hasSolarProduction
+              ${solarToGrid > 0 && hasSolarProduction
                 ? svg`<circle
                     r="1"
                     class="return"
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${
-                        (1 - solarToGrid / totalConsumption) * speedFactor
-                      }s"
+                      dur="${3}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -306,16 +304,14 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     </animateMotion>
                   </circle>`
                 : ""}
-              ${solarToHome
+              ${solarToHome > 0
                 ? svg`<circle
                     r="1"
                     class="solar"
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${
-                        (1 - solarToHome / totalConsumption) * speedFactor
-                      }s"
+                      dur="${3}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -330,9 +326,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${
-                        (1 - solarToBattery / totalConsumption) * speedFactor
-                      }s"
+                      dur="${3}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -347,9 +341,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${
-                        (1 - batteryToHome / totalConsumption) * speedFactor
-                      }s"
+                      dur="${3}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
