@@ -319,6 +319,21 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     </animateMotion>
                   </circle>`
                 : ""}
+              ${gridToHome
+                ? svg`<circle
+                    r="1"
+                    class="grid"
+                    vector-effect="non-scaling-stroke"
+                  >
+                    <animateMotion
+                      dur="${3}s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#grid" />
+                    </animateMotion>
+                  </circle>`
+                : ""}
               ${solarToBattery
                 ? svg`<circle
                     r="1"
