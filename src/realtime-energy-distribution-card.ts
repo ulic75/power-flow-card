@@ -20,6 +20,8 @@ import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribu
 import { roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
+const SLOWEST_CIRCLE_RATE = 4;
+const FASTEST_CIRCLE_RATE = 0.5;
 
 @customElement("realtime-energy-distribution-card")
 export class RealtimeEnergyDistributionCard extends LitElement {
@@ -33,6 +35,10 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   public getCardSize(): Promise<number> | number {
     return 3;
   }
+
+  private circleRate = (value: number, total: number): number =>
+    SLOWEST_CIRCLE_RATE -
+    (value / total) * (SLOWEST_CIRCLE_RATE - FASTEST_CIRCLE_RATE);
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
@@ -64,6 +70,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       roundValue(solarState, 1) - solarToGrid - solarToBattery;
 
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
+    const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
 
     // TODO: Delete these
     const batteryFromGrid = 0;
@@ -293,7 +300,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${3}s"
+                      dur="${this.circleRate(solarToGrid, totalConsumption)}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -308,7 +315,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${3}s"
+                      dur="${this.circleRate(solarToHome, totalConsumption)}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -323,7 +330,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${3}s"
+                      dur="${this.circleRate(gridToHome, totalConsumption)}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -338,7 +345,10 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${3}s"
+                      dur="${this.circleRate(
+                        solarToBattery,
+                        totalConsumption
+                      )}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -353,7 +363,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${3}s"
+                      dur="${this.circleRate(batteryToHome, totalConsumption)}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
