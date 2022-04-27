@@ -4,6 +4,8 @@ This card for [Home Assistant](https://github.com/home-assistant/home-assistant)
 
 The card works with entities from within the **sensor** & **binary_sensor** domain and displays the sensors current state as well as a line graph representation of the history.
 
+![realtime-distribution-preview](https://user-images.githubusercontent.com/5641964/165636264-dc2e02ed-e550-4167-9ce4-3dcbd7a84272.png)
+
 ## Install
 
 ### HACS (recommended)
