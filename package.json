@@ -1,7 +1,14 @@
 {
   "name": "realtime-energy-distribution-card",
   "version": "1.0.0",
-  "description": "",
+  "description": "A realtime energy distribution card for Home Assistant",
+  "keywords": [
+    "home-assistant",
+    "homeassistant",
+    "hass",
+    "dashboard",
+    "custom-cards"
+  ],
   "main": "index.js",
   "repository": {
     "type": "git",
