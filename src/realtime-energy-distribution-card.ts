@@ -95,6 +95,14 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       batteryIcon = mdiBatteryOutline;
     }
 
+    const newDur = {
+      batteryToHome: this.circleRate(batteryToHome, totalConsumption),
+      gridToHome: this.circleRate(gridToHome, totalConsumption),
+      solarToBattery: this.circleRate(solarToBattery, totalConsumption),
+      solarToGrid: this.circleRate(solarToGrid, totalConsumption),
+      solarToHome: this.circleRate(solarToHome, totalConsumption),
+    };
+
     return html`
       <ha-card .header=${this._config.title}>
         <div class="card-content">
@@ -261,7 +269,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(gridToHome, totalConsumption)}s"
+                      dur="${newDur.gridToHome}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -295,7 +303,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(solarToHome, totalConsumption)}s"
+                      dur="${newDur.solarToHome}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -329,7 +337,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(solarToGrid, totalConsumption)}s"
+                      dur="${newDur.solarToGrid}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -361,10 +369,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(
-                        solarToBattery,
-                        totalConsumption
-                      )}s"
+                      dur="${newDur.solarToBattery}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
@@ -397,7 +402,7 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(batteryToHome, totalConsumption)}s"
+                      dur="${newDur.batteryToHome}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
