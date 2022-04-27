@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/ulic75/realtime-energy-distribution-card#readme",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint src/*",
+    "watch": "rollup -wc"
   },
   "dependencies": {
     "@mdi/js": "^6.6.96",
