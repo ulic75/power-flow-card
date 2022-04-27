@@ -246,17 +246,38 @@ export class RealtimeEnergyDistributionCard extends LitElement {
               viewBox="0 0 100 100"
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid slice"
+              id="grid-home-flow"
             >
-              ${hasReturnToGrid && hasSolarProduction
-                ? svg`<path
-                    id="return"
-                    class="return"
-                    d="M${hasBattery ? 45 : 47},0 v15 c0,${
-                    hasBattery ? "35 -10,30 -30,30" : "40 -10,35 -30,35"
-                  } h-20"
+              <path
+                class="grid"
+                id="grid"
+                d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
+                vector-effect="non-scaling-stroke"
+              ></path>
+              ${gridToHome
+                ? svg`<circle
+                    r="1"
+                    class="grid"
                     vector-effect="non-scaling-stroke"
-                  ></path> `
+                  >
+                    <animateMotion
+                      dur="${this.circleRate(gridToHome, totalConsumption)}s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                    >
+                      <mpath xlink:href="#grid" />
+                    </animateMotion>
+                  </circle>`
                 : ""}
+            </svg>
+          </div>
+          <div class="lines ${classMap({ battery: hasBattery })}">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+              id="solar-home-flow"
+            >
               ${hasSolarProduction
                 ? svg`<path
                     id="solar"
@@ -266,44 +287,6 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                   } h25"
                     vector-effect="non-scaling-stroke"
                   ></path>`
-                : ""}
-              ${hasBattery
-                ? svg`<path
-                    id="battery-home"
-                    class="battery-home"
-                    d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
-                    vector-effect="non-scaling-stroke"
-                  ></path>
-                  `
-                : ""}
-              ${hasBattery && hasSolarProduction
-                ? svg`<path
-                    id="battery-solar"
-                    class="battery-solar"
-                    d="M50,0 V100"
-                    vector-effect="non-scaling-stroke"
-                  ></path>`
-                : ""}
-              <path
-                class="grid"
-                id="grid"
-                d="M0,${hasBattery ? 50 : hasSolarProduction ? 56 : 53} H100"
-                vector-effect="non-scaling-stroke"
-              ></path>
-              ${solarToGrid > 0 && hasSolarProduction
-                ? svg`<circle
-                    r="1"
-                    class="return"
-                    vector-effect="non-scaling-stroke"
-                  >
-                    <animateMotion
-                      dur="${this.circleRate(solarToGrid, totalConsumption)}s"
-                      repeatCount="indefinite"
-                      calcMode="linear"
-                    >
-                      <mpath xlink:href="#return" />
-                    </animateMotion>
-                  </circle>`
                 : ""}
               ${solarToHome > 0
                 ? svg`<circle
@@ -320,20 +303,56 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                     </animateMotion>
                   </circle>`
                 : ""}
-              ${gridToHome
+            </svg>
+          </div>
+          <div class="lines ${classMap({ battery: hasBattery })}">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+              id="solar-grid-flow"
+            >
+              ${hasReturnToGrid && hasSolarProduction
+                ? svg`<path
+                    id="return"
+                    class="return"
+                    d="M${hasBattery ? 45 : 47},0 v15 c0,${
+                    hasBattery ? "35 -10,30 -30,30" : "40 -10,35 -30,35"
+                  } h-20"
+                    vector-effect="non-scaling-stroke"
+                  ></path> `
+                : ""}
+              ${solarToGrid > 0 && hasSolarProduction
                 ? svg`<circle
                     r="1"
-                    class="grid"
+                    class="return"
                     vector-effect="non-scaling-stroke"
                   >
                     <animateMotion
-                      dur="${this.circleRate(gridToHome, totalConsumption)}s"
+                      dur="${this.circleRate(solarToGrid, totalConsumption)}s"
                       repeatCount="indefinite"
                       calcMode="linear"
                     >
-                      <mpath xlink:href="#grid" />
+                      <mpath xlink:href="#return" />
                     </animateMotion>
                   </circle>`
+                : ""}
+            </svg>
+          </div>
+          <div class="lines ${classMap({ battery: hasBattery })}">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+              id="solar-battery-flow"
+            >
+              ${hasBattery && hasSolarProduction
+                ? svg`<path
+                    id="battery-solar"
+                    class="battery-solar"
+                    d="M50,0 V100"
+                    vector-effect="non-scaling-stroke"
+                  ></path>`
                 : ""}
               ${solarToBattery
                 ? svg`<circle
@@ -352,6 +371,24 @@ export class RealtimeEnergyDistributionCard extends LitElement {
                       <mpath xlink:href="#battery-solar" />
                     </animateMotion>
                   </circle>`
+                : ""}
+            </svg>
+          </div>
+          <div class="lines ${classMap({ battery: hasBattery })}">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid slice"
+              id="batter-home-flow"
+            >
+              ${hasBattery
+                ? svg`<path
+                    id="battery-home"
+                    class="battery-home"
+                    d="M55,100 v-15 c0,-35 10,-30 30,-30 h20"
+                    vector-effect="non-scaling-stroke"
+                  ></path>
+                  `
                 : ""}
               ${batteryToHome > 0
                 ? svg`<circle
