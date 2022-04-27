@@ -20,8 +20,8 @@ import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribu
 import { roundValue } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
-const SLOWEST_CIRCLE_RATE = 4;
-const FASTEST_CIRCLE_RATE = 0.5;
+const SLOWEST_CIRCLE_RATE = 6;
+const FASTEST_CIRCLE_RATE = 0.75;
 
 @customElement("realtime-energy-distribution-card")
 export class RealtimeEnergyDistributionCard extends LitElement {
