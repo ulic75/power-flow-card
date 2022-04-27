@@ -13,6 +13,9 @@
     "url": "https://github.com/ulic75/realtime-energy-distribution-card/issues"
   },
   "homepage": "https://github.com/ulic75/realtime-energy-distribution-card#readme",
+  "scripts": {
+    "build": "rollup -c"
+  },
   "dependencies": {
     "@mdi/js": "^6.6.96",
     "custom-card-helpers": "^1.9.0",
