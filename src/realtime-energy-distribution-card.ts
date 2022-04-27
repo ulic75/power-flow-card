@@ -14,7 +14,7 @@ import {
 } from "@mdi/js";
 import { formatNumber, HomeAssistant } from "custom-card-helpers";
 import { css, html, LitElement, svg, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { RealtimeEnergyDistributionCardConfig } from "./realtime-energy-distribution-card-config.js";
 import { roundValue } from "./utils.js";
@@ -28,6 +28,12 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: RealtimeEnergyDistributionCardConfig;
 
+  @query("#battery-home-flow") batteryToHomeFlow?: SVGSVGElement;
+  @query("#grid-home-flow") gridToHomeFlow?: SVGSVGElement;
+  @query("#solar-battery-flow") solarToBatteryFlow?: SVGSVGElement;
+  @query("#solar-grid-flow") solarToGridFlow?: SVGSVGElement;
+  @query("#solar-home-flow") solarToHomeFlow?: SVGSVGElement;
+
   setConfig(config: RealtimeEnergyDistributionCardConfig): void {
     this._config = config;
   }
@@ -35,6 +41,8 @@ export class RealtimeEnergyDistributionCard extends LitElement {
   public getCardSize(): Promise<number> | number {
     return 3;
   }
+
+  private previousDur: { [name: string]: number } = {};
 
   private circleRate = (value: number, total: number): number =>
     SLOWEST_CIRCLE_RATE -
@@ -102,6 +110,28 @@ export class RealtimeEnergyDistributionCard extends LitElement {
       solarToGrid: this.circleRate(solarToGrid, totalConsumption),
       solarToHome: this.circleRate(solarToHome, totalConsumption),
     };
+
+    // Smooth duration changes
+    [
+      "batteryToHome",
+      "gridToHome",
+      "solarToBattery",
+      "solarToGrid",
+      "solarToHome",
+    ].forEach((flowName) => {
+      const flowSVGElement = this[`${flowName}Flow`];
+      if (
+        flowSVGElement &&
+        this.previousDur[flowName] &&
+        this.previousDur[flowName] !== newDur[flowName]
+      ) {
+        flowSVGElement.setCurrentTime(
+          flowSVGElement.getCurrentTime() *
+            (newDur[flowName] / this.previousDur[flowName])
+        );
+      }
+      this.previousDur[flowName] = newDur[flowName];
+    });
 
     return html`
       <ha-card .header=${this._config.title}>
