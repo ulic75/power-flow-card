@@ -74,6 +74,7 @@ entities:
   battery_charge: sensor.powerwall_charge
   grid: sensor.powerwall_site_now
   solar: sensor.powerwall_solar_now
+max_flow_rate: 10
 ```
 
 ### Flow Formula
