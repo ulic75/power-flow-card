@@ -57,12 +57,12 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 
 #### Entities map
 
-| Name                     | Unit | Description                                                                            |
-| ------------------------ | :--: | -------------------------------------------------------------------------------------- |
-| battery **_(required)_** |  kW  | Entity providing a positive value when charging and a negative value when discharging. |
-| battery_charge           |  %   | Entity providing the current percentage of charge on the battery.                      |
-| grid **_(required)_**    |  kW  | Entity providing a positive value when consuming and a negative value when producting. |
-| solar **_(required)_**   |  kW  | Entity providing a value of generation.                                                |
+| Name                  | Unit | Description                                                                                         |
+| --------------------- | :--: | --------------------------------------------------------------------------------------------------- |
+| grid **_(required)_** |  kW  | Entity providing a state with a positive value when consuming and a negative value when producting. |
+| battery               |  kW  | Entity providing a state with a positive value when charging and a negative value when discharging. |
+| battery_charge        |  %   | Entity providing a state with the current percentage of charge on the battery.                      |
+| solar                 |  kW  | Entity providing a state with the value of generation.                                              |
 
 ### Example usage
 
