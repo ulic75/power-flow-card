@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint no-nested-ternary: warn */
 import {
   mdiArrowDown,
   mdiArrowLeft,
