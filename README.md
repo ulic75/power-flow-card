@@ -142,3 +142,9 @@ max - (value / total) * (max - min);
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
+
+## Credits
+
+- [HA Energy Distribution Card](https://www.home-assistant.io//dashboards/energy/#energy-distribution)
+- [@angular/cdk](https://github.com/angular/components/tree/main/src/cdk)
+- [Jack Moore](https://www.jacklmoore.com/notes/rounding-in-javascript/)
