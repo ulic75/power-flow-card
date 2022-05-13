@@ -100,34 +100,55 @@ export class PowerFlowCard extends LitElement {
       ? Math.abs(Math.min(this.getEntityStateWatts(entities.solar), 0))
       : Math.max(this.getEntityStateWatts(entities.solar), 0);
 
-    const solarToGrid = hasReturnToGrid
-      ? typeof entities.grid === "string"
-        ? this.entityInverted("grid")
-          ? Math.max(this.getEntityStateWatts(entities.grid), 0)
-          : Math.abs(Math.min(this.getEntityStateWatts(entities.grid), 0))
-        : this.getEntityStateWatts(entities.grid.production)
-      : 0;
+    let solarToGrid = 0;
+    if (hasReturnToGrid) {
+      if (typeof entities.grid === "string") {
+        if (this.entityInverted("grid"))
+          solarToGrid = Math.max(this.getEntityStateWatts(entities.grid), 0);
+        else
+          solarToGrid = Math.abs(
+            Math.min(this.getEntityStateWatts(entities.grid), 0)
+          );
+      } else solarToGrid = this.getEntityStateWatts(entities.grid.production);
+    }
 
-    const batteryToHome =
-      typeof entities.battery === "string"
-        ? this.entityInverted("battery")
-          ? Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0))
-          : Math.max(this.getEntityStateWatts(entities.battery), 0)
-        : this.getEntityStateWatts(entities.battery?.consumption);
+    let batteryToHome = 0;
+    if (typeof entities.battery === "string") {
+      if (this.entityInverted("battery"))
+        batteryToHome = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.battery), 0)
+        );
+      else
+        batteryToHome = Math.max(this.getEntityStateWatts(entities.battery), 0);
+    } else {
+      batteryToHome = this.getEntityStateWatts(entities.battery?.consumption);
+    }
 
-    const gridToHome =
-      typeof entities.grid === "string"
-        ? this.entityInverted("grid")
-          ? Math.abs(Math.min(this.getEntityStateWatts(entities.grid), 0))
-          : Math.max(this.getEntityStateWatts(entities.grid), 0)
-        : this.getEntityStateWatts(entities.grid.consumption);
+    let gridToHome = 0;
+    if (typeof entities.grid === "string") {
+      if (this.entityInverted("grid"))
+        gridToHome = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.grid), 0)
+        );
+      else gridToHome = Math.max(this.getEntityStateWatts(entities.grid), 0);
+    } else {
+      gridToHome = this.getEntityStateWatts(entities.grid.consumption);
+    }
 
-    const solarToBattery =
-      typeof entities.battery === "string"
-        ? this.entityInverted("battery")
-          ? Math.max(this.getEntityStateWatts(entities.battery), 0)
-          : Math.abs(Math.min(this.getEntityStateWatts(entities.battery), 0))
-        : this.getEntityStateWatts(entities.battery?.production);
+    let solarToBattery = 0;
+    if (typeof entities.battery === "string") {
+      if (this.entityInverted("battery"))
+        solarToBattery = Math.max(
+          this.getEntityStateWatts(entities.battery),
+          0
+        );
+      else
+        solarToBattery = Math.abs(
+          Math.min(this.getEntityStateWatts(entities.battery), 0)
+        );
+    } else {
+      solarToBattery = this.getEntityStateWatts(entities.battery?.production);
+    }
 
     const solarToHome = solarState - solarToGrid - solarToBattery;
 
