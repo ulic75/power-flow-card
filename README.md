@@ -89,13 +89,11 @@ Using combined entities for grid, battery and solor that support positive state 
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery: sensor.battery_in_out
   battery_charge: sensor.battery_percent
   grid: sensor.grid_in_out
   solar: sensor.solar_out
-max_flow_rate: 10
 ```
 
 #### Inverted Entities Example
@@ -104,14 +102,12 @@ Using combined entites as above but where the battery and grid entities are inve
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery: sensor.battery_in_out
   battery_charge: sensor.battery_percent
   grid: sensor.grid_in_out
   solar: sensor.solar_out
 inverted_entities: battery, grid
-max_flow_rate: 10
 ```
 
 #### Split Entites Example
@@ -120,7 +116,6 @@ Using split entities for grid and battery where each consumption and production 
 
 ```yaml
 type: custom:power-flow-card
-title: Power Distribution
 entities:
   battery:
     consumption: sensor.battery_out
@@ -130,7 +125,6 @@ entities:
     consumption: sensor.grid_out
     production: sensor.grid_in
   solar: sensor.solar_out
-max_flow_rate: 10
 ```
 
 ### Flow Formula
