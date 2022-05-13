@@ -155,7 +155,6 @@ export class PowerFlowCard extends LitElement {
     const homeConsumption = batteryToHome + gridToHome + solarToHome;
     const totalConsumption = homeConsumption + solarToBattery + solarToGrid;
 
-    // eslint-disable-next-line prefer-const
     let homeBatteryCircumference: number | undefined;
     if (hasBattery)
       homeBatteryCircumference =
