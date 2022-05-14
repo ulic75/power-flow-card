@@ -22,6 +22,7 @@ import { coerceNumber, coerceStringArray, round } from "./utils.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
 const KW_DECIMALS = 1;
+const W_DECIMALS = 0;
 const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 
@@ -41,6 +42,7 @@ export class PowerFlowCard extends LitElement {
       ...config,
       inverted_entities: coerceStringArray(config.inverted_entities, ","),
       kw_decimals: coerceNumber(config.kw_decimals, KW_DECIMALS),
+      w_decimals: coerceNumber(config.w_decimals, W_DECIMALS),
       min_flow_rate: coerceNumber(config.min_flow_rate, MIN_FLOW_RATE),
       max_flow_rate: coerceNumber(config.max_flow_rate, MAX_FLOW_RATE),
       watt_threshold: coerceNumber(config.watt_threshold),
@@ -78,7 +80,7 @@ export class PowerFlowCard extends LitElement {
   private displayValue = (value: number) =>
     value >= this._config!.watt_threshold
       ? `${round(value / 1000, this._config!.kw_decimals)} kW`
-      : `${round(value, 1)} W`;
+      : `${round(value, this._config!.w_decimals)} W`;
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
