@@ -78,9 +78,13 @@ export class PowerFlowCard extends LitElement {
   };
 
   private displayValue = (value: number) =>
-    value >= this._config!.watt_threshold
-      ? `${round(value / 1000, this._config!.kw_decimals)} kW`
-      : `${round(value, this._config!.w_decimals)} W`;
+    if (value >= this._config!.watt_threshold)
+      `${round(value / 1000, this._config!.kw_decimals)} kW`;
+    else {
+      if (this._config!.w_decimals > 0)
+        `${round(value, this._config!.w_decimals)} W`;
+      else `${round(value)} W`;
+    };
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
