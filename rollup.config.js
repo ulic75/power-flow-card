@@ -23,7 +23,7 @@ export default [
     input: "src/power-flow-card.ts",
     output: [
       {
-        dir: "./dist",
+        file: "dist/power-flow-card2.js",
       },
     ],
     plugins: [

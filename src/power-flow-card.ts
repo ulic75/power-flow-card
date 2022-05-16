@@ -27,7 +27,7 @@ const MAX_FLOW_RATE = 6;
 const MIN_FLOW_RATE = 0.75;
 const W_DECIMALS = 1;
 
-@customElement("power-flow-card")
+@customElement("power-flow-card2")
 export class PowerFlowCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: PowerFlowCardConfig;
@@ -864,14 +864,14 @@ const windowWithCards = window as unknown as Window & {
 };
 windowWithCards.customCards = windowWithCards.customCards || [];
 windowWithCards.customCards.push({
-  type: "power-flow-card",
-  name: "Power Flow Card",
+  type: "power-flow-card2",
+  name: "Power Flow Card 2",
   description:
     "A power distribution card inspired by the official Energy Distribution card for Home Assistant",
 });
 
 declare global {
   interface HTMLElementTagNameMap {
-    "power-flow-card": PowerFlowCard;
+    "power-flow-card2": PowerFlowCard;
   }
 }
