@@ -488,18 +488,18 @@ export class PowerFlowCard extends LitElement {
                   ></path>
                   ${bob && hasSolarProduction
                     ? svg`<circle
-                            r="1"
-                            class="return"
-                            vector-effect="non-scaling-stroke"
-                          >
-                            <animateMotion
-                              dur="${newDur.solarToGrid}s"
-                              repeatCount="indefinite"
-                              calcMode="linear"
-                            >
-                              <mpath xlink:href="#return" />
-                            </animateMotion>
-                          </circle>`
+                        r="1"
+                        class="return"
+                        vector-effect="non-scaling-stroke"
+                      >
+                        <animateMotion
+                          dur="${newDur.solarToGrid}s"
+                          repeatCount="indefinite"
+                          calcMode="linear"
+                        >
+                          <mpath xlink:href="#return" />
+                        </animateMotion>
+                      </circle>`
                     : ""}
                 </svg>
               </div>`
