@@ -201,18 +201,8 @@ export class PowerFlowCard extends LitElement {
       0
     );
 
-    const totalLines =
-      gridConsumption +
-      (solarConsumption ?? 0) +
-      (returnedToGrid ? returnedToGrid - (batteryToGrid ?? 0) : 0) +
-      (solarToBattery ?? 0) +
-      (batteryConsumption ?? 0) +
-      (batteryFromGrid ?? 0) +
-      (batteryToGrid ?? 0);
-
-    const batteryChargeState = entities.battery_charge?.length
-      ? this.getEntityState(entities.battery_charge)
-      : null;
+    //! Clean up this name
+    const bob = (returnedToGrid ?? 0) - (batteryToGrid ?? 0);
 
     let homeBatteryCircumference: number | undefined;
     if (batteryConsumption)
@@ -232,6 +222,19 @@ export class PowerFlowCard extends LitElement {
         (solarConsumption ?? 0)) /
         totalHomeConsumption);
 
+    const totalLines =
+      gridConsumption +
+      (solarConsumption ?? 0) +
+      (returnedToGrid ? returnedToGrid - (batteryToGrid ?? 0) : 0) +
+      (solarToBattery ?? 0) +
+      (batteryConsumption ?? 0) +
+      (batteryFromGrid ?? 0) +
+      (batteryToGrid ?? 0);
+
+    const batteryChargeState = entities.battery_charge?.length
+      ? this.getEntityState(entities.battery_charge)
+      : null;
+
     let batteryIcon = mdiBatteryHigh;
     if (batteryChargeState === null) {
       batteryIcon = mdiBattery;
@@ -242,8 +245,6 @@ export class PowerFlowCard extends LitElement {
     } else if (batteryChargeState <= 16) {
       batteryIcon = mdiBatteryOutline;
     }
-
-    const bob = (returnedToGrid ?? 0) - (batteryToGrid ?? 0);
 
     const newDur = {
       batteryGrid: this.circleRate(
