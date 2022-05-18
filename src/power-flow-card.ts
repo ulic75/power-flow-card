@@ -194,7 +194,7 @@ export class PowerFlowCard extends LitElement {
       batteryConsumption = (totalBatteryOut ?? 0) - (batteryToGrid ?? 0);
     }
 
-    const gridConsumption = Math.max(0, totalFromGrid - (batteryFromGrid ?? 0));
+    const gridConsumption = Math.max(totalFromGrid - (batteryFromGrid ?? 0), 0);
 
     const totalHomeConsumption = Math.max(
       gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0),
