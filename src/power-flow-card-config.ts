@@ -20,6 +20,7 @@ export interface PowerFlowCardConfig extends LovelaceCardConfig {
   dashboard_link?: string;
   inverted_entities: string | string[];
   kw_decimals: number;
+  w_decimals: number;
   min_flow_rate: number;
   max_flow_rate: number;
   watt_threshold: number;
