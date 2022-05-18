@@ -189,6 +189,11 @@ export class PowerFlowCard extends LitElement {
       batteryToGrid = returnedToGrid;
     }
 
+    //! Clean up this name
+    let solarToGrid = 0;
+    if (hasSolarProduction && returnedToGrid)
+      solarToGrid = returnedToGrid - (batteryToGrid ?? 0);
+
     let batteryConsumption: number | null = null;
     if (hasBattery) {
       batteryConsumption = (totalBatteryOut ?? 0) - (batteryToGrid ?? 0);
@@ -200,9 +205,6 @@ export class PowerFlowCard extends LitElement {
       gridConsumption + (solarConsumption ?? 0) + (batteryConsumption ?? 0),
       0
     );
-
-    //! Clean up this name
-    const bob = (returnedToGrid ?? 0) - (batteryToGrid ?? 0);
 
     let homeBatteryCircumference: number | undefined;
     if (batteryConsumption)
@@ -225,7 +227,7 @@ export class PowerFlowCard extends LitElement {
     const totalLines =
       gridConsumption +
       (solarConsumption ?? 0) +
-      (returnedToGrid ? returnedToGrid - (batteryToGrid ?? 0) : 0) +
+      solarToGrid +
       (solarToBattery ?? 0) +
       (batteryConsumption ?? 0) +
       (batteryFromGrid ?? 0) +
@@ -254,7 +256,7 @@ export class PowerFlowCard extends LitElement {
       batteryToHome: this.circleRate(batteryConsumption ?? 0, totalLines),
       gridToHome: this.circleRate(gridConsumption, totalLines),
       solarToBattery: this.circleRate(solarToBattery ?? 0, totalLines),
-      solarToGrid: this.circleRate(bob, totalLines),
+      solarToGrid: this.circleRate(solarToGrid, totalLines),
       solarToHome: this.circleRate(solarConsumption ?? 0, totalLines),
     };
 
@@ -486,7 +488,7 @@ export class PowerFlowCard extends LitElement {
                       : "40 -10,35 -30,35"} h-20"
                     vector-effect="non-scaling-stroke"
                   ></path>
-                  ${bob && hasSolarProduction
+                  ${solarToGrid && hasSolarProduction
                     ? svg`<circle
                         r="1"
                         class="return"
