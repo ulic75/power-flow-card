@@ -369,39 +369,34 @@ export class PowerFlowCard extends LitElement {
                 </div>`
               : html`<div class="spacer"></div>`}
             <div class="circle-container home">
-              <div
-                class="circle ${classMap({
-                  border: homeSolarCircumference === undefined,
-                })}"
-              >
+              <div class="circle">
                 <ha-svg-icon .path=${mdiHome}></ha-svg-icon>
                 ${this.displayValue(totalHomeConsumption)}
-                ${homeSolarCircumference !== undefined
-                  ? html`<svg>
-                      ${homeSolarCircumference !== undefined
-                        ? svg`<circle
+                <svg>
+                  ${homeSolarCircumference !== undefined
+                    ? svg`<circle
                             class="solar"
                             cx="40"
                             cy="40"
                             r="38"
                             stroke-dasharray="${homeSolarCircumference} ${
-                            CIRCLE_CIRCUMFERENCE - homeSolarCircumference
-                          }"
+                        CIRCLE_CIRCUMFERENCE - homeSolarCircumference
+                      }"
                             shape-rendering="geometricPrecision"
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE - homeSolarCircumference
                             }"
                           />`
-                        : ""}
-                      ${homeBatteryCircumference
-                        ? svg`<circle
+                    : ""}
+                  ${homeBatteryCircumference
+                    ? svg`<circle
                             class="battery"
                             cx="40"
                             cy="40"
                             r="38"
                             stroke-dasharray="${homeBatteryCircumference} ${
-                            CIRCLE_CIRCUMFERENCE - homeBatteryCircumference
-                          }"
+                        CIRCLE_CIRCUMFERENCE - homeBatteryCircumference
+                      }"
                             stroke-dashoffset="-${
                               CIRCLE_CIRCUMFERENCE -
                               homeBatteryCircumference -
@@ -409,25 +404,24 @@ export class PowerFlowCard extends LitElement {
                             }"
                             shape-rendering="geometricPrecision"
                           />`
-                        : ""}
-                      <circle
-                        class="grid"
-                        cx="40"
-                        cy="40"
-                        r="38"
-                        stroke-dasharray="${homeGridCircumference ??
-                        CIRCLE_CIRCUMFERENCE -
-                          homeSolarCircumference! -
-                          (homeBatteryCircumference ||
-                            0)} ${homeGridCircumference !== undefined
-                          ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
-                          : homeSolarCircumference! +
-                            (homeBatteryCircumference || 0)}"
-                        stroke-dashoffset="0"
-                        shape-rendering="geometricPrecision"
-                      />
-                    </svg>`
-                  : ""}
+                    : ""}
+                  <circle
+                    class="grid"
+                    cx="40"
+                    cy="40"
+                    r="38"
+                    stroke-dasharray="${homeGridCircumference ??
+                    CIRCLE_CIRCUMFERENCE -
+                      homeSolarCircumference! -
+                      (homeBatteryCircumference ||
+                        0)} ${homeGridCircumference !== undefined
+                      ? CIRCLE_CIRCUMFERENCE - homeGridCircumference
+                      : homeSolarCircumference! +
+                        (homeBatteryCircumference || 0)}"
+                    stroke-dashoffset="0"
+                    shape-rendering="geometricPrecision"
+                  />
+                </svg>
               </div>
               <span class="label"
                 >${this.hass.localize(
