@@ -570,7 +570,7 @@ export class PowerFlowCard extends LitElement {
                         )}</span
                       >
                     </div>`
-                  : null}
+                  : html`<div class="spacer"></div>`}
                 ${hasGas && hasWater
                   ? html`<div class="circle-container water bottom">
                       <svg width="80" height="30">
@@ -606,9 +606,14 @@ export class PowerFlowCard extends LitElement {
                     </div>`
                   : html`<div class="spacer"></div>`}
               </div>`
-            : ""}
+            : html`<div class="spacer"></div>`}
           ${hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -644,7 +649,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasReturnToGrid && hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -678,7 +688,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasBattery && hasSolarProduction
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -710,7 +725,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasGrid
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -746,7 +766,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : null}
           ${hasBattery
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -778,7 +803,12 @@ export class PowerFlowCard extends LitElement {
               </div>`
             : ""}
           ${hasGrid && hasBattery
-            ? html`<div class="lines ${classMap({ battery: hasBattery })}">
+            ? html`<div
+                class="lines ${classMap({
+                  battery: hasBattery,
+                  high: !hasBattery && hasGas && hasWater,
+                })}"
+              >
                 <svg
                   viewBox="0 0 100 100"
                   xmlns="http://www.w3.org/2000/svg"
@@ -868,6 +898,10 @@ export class PowerFlowCard extends LitElement {
       bottom: 100px;
       height: 156px;
     }
+    .lines.high {
+      bottom: 107px;
+      height: 156px;
+    }
     .lines svg {
       width: calc(100% - 160px);
       height: 100%;
@@ -924,6 +958,8 @@ export class PowerFlowCard extends LitElement {
       position: relative;
       text-decoration: none;
       color: var(--primary-text-color);
+      background-color: var(--card-background-color);
+      z-index: 1;
     }
     ha-svg-icon {
       padding-bottom: 2px;
