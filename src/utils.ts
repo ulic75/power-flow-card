@@ -1,3 +1,6 @@
+import { PowerFlowCardConfig } from "./power-flow-card-config";
+import { ComboEntity } from "./type";
+
 /* eslint-disable no-redeclare */
 export const round = (value: number, decimalPlaces: number): number =>
   Number(
@@ -44,4 +47,21 @@ export function coerceStringArray(
   }
 
   return result;
+}
+
+export function createHistoryUrl(
+  config: PowerFlowCardConfig,
+  entity?: string | ComboEntity
+): string {
+  if(!entity || !config.clickable_entities)
+    return '#';
+
+  if(typeof entity !== "string")
+  {
+    entity = entity.consumption;
+  }
+
+  return `
+    /history?entity_id=${entity}
+  `;
 }
