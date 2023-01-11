@@ -122,7 +122,7 @@ export class PowerFlowCard extends LitElement {
 
     if(typeof entityId !== "string")
     {
-      entityId = entityId.production;
+      entityId = entityId.production ?? entityId.consumption;
     }
 
     let e = new CustomEvent('hass-more-info', { composed: true, detail: {entityId} });
@@ -556,7 +556,10 @@ export class PowerFlowCard extends LitElement {
                 <div class="spacer"></div>
                 ${hasBattery
                   ? html` <div class="circle-container battery">
-                      <div class="circle">
+                      <div class="circle" @click=${e => {
+                        e.stopPropagation();
+                        this.openDetails(entities.battery_charge ?? entities.battery);
+                      }}>
                         ${batteryChargeState !== null
                           ? html` <span>
                               ${formatNumber(
@@ -612,7 +615,10 @@ export class PowerFlowCard extends LitElement {
                               </circle>`
                           : ""}
                       </svg>
-                      <div class="circle">
+                      <div class="circle" @click=${e => {
+                        e.stopPropagation();
+                        this.openDetails(entities.water);
+                      }}>
                         <ha-svg-icon .path=${mdiWater}></ha-svg-icon>
                         ${formatNumber(waterUsage || 0, this.hass.locale, {
                           maximumFractionDigits: 1,
