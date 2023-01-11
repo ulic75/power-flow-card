@@ -378,7 +378,7 @@ export class PowerFlowCard extends LitElement {
                         <span class="solar">
                           ${this.displayValue(totalSolarProduction)}</span
                         >
-                    </div>
+                      </div>
                     </div>`
                   : hasGas || hasWater
                   ? html`<div class="spacer"></div>`
@@ -479,7 +479,7 @@ export class PowerFlowCard extends LitElement {
                       ></ha-svg-icon
                       >${this.displayValue(totalFromGrid)}
                     </span>
-                    </div>
+                  </div>
                   <span class="label"
                     >${this.hass.localize(
                       "ui.panel.lovelace.cards.energy.energy_distribution.grid"

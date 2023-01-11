@@ -1,6 +1,3 @@
-import { PowerFlowCardConfig } from "./power-flow-card-config";
-import { ComboEntity } from "./type";
-
 /* eslint-disable no-redeclare */
 export const round = (value: number, decimalPlaces: number): number =>
   Number(
