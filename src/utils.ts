@@ -48,20 +48,3 @@ export function coerceStringArray(
 
   return result;
 }
-
-export function createHistoryUrl(
-  config: PowerFlowCardConfig,
-  entity?: string | ComboEntity
-): string {
-  if(!entity || !config.clickable_entities)
-    return '#';
-
-  if(typeof entity !== "string")
-  {
-    entity = entity.consumption;
-  }
-
-  return `
-    /history?entity_id=${entity}
-  `;
-}

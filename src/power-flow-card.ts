@@ -25,9 +25,8 @@ import {
   coerceStringArray,
   round,
   isNumberValue,
-  createHistoryUrl,
 } from "./utils.js";
-import { EntityType } from "./type.js";
+import { ComboEntity, EntityType } from "./type.js";
 import { logError } from "./logging.js";
 
 const CIRCLE_CIRCUMFERENCE = 238.76104;
@@ -117,6 +116,18 @@ export class PowerFlowCard extends LitElement {
       ? `${round(value / 1000, this._config!.kw_decimals)} kW`
       : `${round(value, this._config!.w_decimals)} W`;
   };
+
+  private openDetails(entityId?: string | ComboEntity): void {
+    if(!entityId || !this._config.clickable_entities) return;
+
+    if(typeof entityId !== "string")
+    {
+      entityId = entityId.production;
+    }
+
+    let e = new CustomEvent('hass-more-info', { composed: true, detail: {entityId} });
+    this.dispatchEvent(e);
+  }
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
@@ -359,12 +370,15 @@ export class PowerFlowCard extends LitElement {
                           "ui.panel.lovelace.cards.energy.energy_distribution.solar"
                         )}</span
                       >
-                      <a class="circle" href="${createHistoryUrl(this._config, entities.solar)}">
+                      <div class="circle" @click=${e => {
+                        e.stopPropagation();
+                        this.openDetails(entities.solar);
+                      }}>
                         <ha-svg-icon .path=${mdiSolarPower}></ha-svg-icon>
                         <span class="solar">
                           ${this.displayValue(totalSolarProduction)}</span
                         >
-                      </a>
+                    </div>
                     </div>`
                   : hasGas || hasWater
                   ? html`<div class="spacer"></div>`
@@ -376,13 +390,16 @@ export class PowerFlowCard extends LitElement {
                           "ui.panel.lovelace.cards.energy.energy_distribution.gas"
                         )}</span
                       >
-                      <a class="circle" href="${createHistoryUrl(this._config, entities.gas)}">
+                      <div class="circle" @click=${e => {
+                        e.stopPropagation();
+                        this.openDetails(entities.gas);
+                      }}>
                         <ha-svg-icon .path=${mdiFire}></ha-svg-icon>
                         ${formatNumber(gasUsage || 0, this.hass.locale, {
                           maximumFractionDigits: 1,
                         })}
                         ${gasUnit}
-                      </a>
+                      </div>
                       <svg width="80" height="30">
                         <path d="M40 -10 v50" id="gas" />
                         ${gasUsage
@@ -441,7 +458,10 @@ export class PowerFlowCard extends LitElement {
           <div class="row">
             ${hasGrid
               ? html` <div class="circle-container grid">
-                  <a class="circle" href="${createHistoryUrl(this._config, entities.grid)}">
+                  <div class="circle" @click=${e => {
+                    e.stopPropagation();
+                    this.openDetails(entities.grid);
+                  }}>
                     <ha-svg-icon .path=${mdiTransmissionTower}></ha-svg-icon>
                     ${returnedToGrid !== null
                       ? html`<span class="return">
@@ -459,7 +479,7 @@ export class PowerFlowCard extends LitElement {
                       ></ha-svg-icon
                       >${this.displayValue(totalFromGrid)}
                     </span>
-                  </a>
+                    </div>
                   <span class="label"
                     >${this.hass.localize(
                       "ui.panel.lovelace.cards.energy.energy_distribution.grid"
