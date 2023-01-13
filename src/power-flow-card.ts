@@ -970,6 +970,7 @@ export class PowerFlowCard extends LitElement {
       width: 84px;
     }
     .circle {
+      cursor: pointer;
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -1112,6 +1113,7 @@ export class PowerFlowCard extends LitElement {
       fill: var(--energy-grid-consumption-color);
     }
     .home .circle {
+      cursor: auto;
       border-width: 0;
       border-color: var(--primary-color);
     }
