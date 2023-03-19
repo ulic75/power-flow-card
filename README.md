@@ -66,6 +66,7 @@ I recommend looking at the [Example usage section](#example-usage) to understand
 | min_flow_rate     | `number` |     .75      | Represents the fastest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
 | max_flow_rate     | `number` |      6       | Represents the slowest amount of time in seconds for a flow dot to travel from one end to the other, see [flow formula](#flow-formula).                                      |
 | watt_threshold    | `number` |      0       | The number of watts to display before converting to and displaying kilowatts. Setting of 0 will always display in kilowatts.                                                 |
+| alternative_flow_rate | `complex` |  | If set with the configuration below, will use the alternative flow rate calculation specified below.     
 
 #### Entities object
 
@@ -149,6 +150,39 @@ max - (value / totalLines) * (max - min);
 ```
 
 I'm not 100% happy with this. I'd prefer to see the dots travel slower when flow is low, but faster when flow is high. For example if the only flow is Grid to Home, I'd like to see the dot move faster if the flow is 15kW, but slower if it's only 2kW. Right now the speed would be the same. If you have a formula you'd like to propose please submit a PR.
+
+### Alternative Flow Formula
+
+This formula is different from the offical formula used by the Energy Distribution card. Instead, you must set a `basePower` and `baseFlowRate` the calculated flow rate will have a inverse proportional relationship as follows:
+
+```js
+flow_rate = baseFlowRate / ( measuredPower / basePower )
+where measuredPower is gridConsumption, solarConsumption, solarToBattery, solarToGrid, batteryConsumption, batteryFromGrid or batteryToGrid as appropriate.
+```
+
+Assume this configuration:
+
+````yaml
+alternative_flow_rate:
+  basePower: 1000 # in watts
+  baseFlowRate: 5 # in seconds i.e. at the base power level it will flow one dot every 5 seconds
+````
+
+Dots will flow as follows:
+
+| measuredPower | flow_rate (s) | Frequency (dots/ s) |
+|---------------|---------------|---------------------|
+| 50 | 100 | 0.01 |
+| 100 | 50 | 0.02 |
+| 250 | 20 | 0.05 |
+| 500 | 10 | 0.1 |
+| 1000 | 5 | 0.2 |
+| 2000 | 2.5 | 0.4 |
+| 5000 | 1 | 1 |
+| 10000 | 0.5 | 2 |
+
+Note that when measurePower halves in relation to basePower, flow_rate doubles or frequency halves (i.e. half as many dots per second).
+
 
 ## Credits
 
