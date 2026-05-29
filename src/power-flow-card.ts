@@ -868,11 +868,11 @@ export class PowerFlowCard extends LitElement {
           ? html`
               <div class="card-actions">
                 <a href=${this._config.dashboard_link}
-                  ><mwc-button>
+                  ><ha-button appearance="plain" size="small" variant="brand">
                     ${this.hass.localize(
                       "ui.panel.lovelace.cards.energy.energy_distribution.go_to_energy_dashboard"
                     )}
-                  </mwc-button></a
+                  </ha-button></a
                 >
               </div>
             `
@@ -1108,6 +1108,7 @@ export class PowerFlowCard extends LitElement {
     }
     .card-actions a {
       text-decoration: none;
+      padding: 8px 0px;
     }
   `;
 }
